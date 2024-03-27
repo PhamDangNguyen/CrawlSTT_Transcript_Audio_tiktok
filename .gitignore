@@ -1,0 +1,17 @@
+audio_cut
+audio_test
+env
+foo.png
+.env
+final_label.csv
+__pycache__
+audio_processed
+venv
+final_label_1ch.csv
+final_label_1ch_wordnum.csv
+final_label_1ch_wordnum_vocab.csv
+final_label_1ch_wordnum_vocab_force_alignment.csv
+final_label_1ch_wordnum_vocab_force_alignment_final.csv
+logs
+tiktok_urls.txt
+Data_crawl_save

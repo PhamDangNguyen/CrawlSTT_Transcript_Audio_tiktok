@@ -1,0 +1,14 @@
+selenium==3.141.0
+requests==2.25.1
+webdriver-manager==3.8.6
+opencv-python
+webvtt-py
+soundfile
+argparse
+tqdm
+requests
+enchant
+unidecode
+pyxdameraulevenshtein
+scipy
+pymongo
