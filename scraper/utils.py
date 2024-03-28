@@ -6,7 +6,7 @@ import os
 from collections import Counter
 import time
 import random
-import requests
+from extra_functionN.get_transcript_web import get_VTT
 
 def __solve_captcha(driver):
     print('wait img loader...')
@@ -120,8 +120,11 @@ def download_audio(args):
     else:
         folder_path = os.path.join(output_path, channel, video_id)
     # Download transcript
-    dl_transcript_cmd = f'yt-dlp --write-subs --output "transcript" --paths "{folder_path}" --skip-download "{video_url}"'
-    os.system(dl_transcript_cmd)
+    # dl_transcript_cmd = f'yt-dlp --write-subs --output "transcript" --paths "{folder_path}" --skip-download "{video_url}"'
+    # os.system(dl_transcript_cmd)
     # Download audio
+    # print(folder_path)
     dl_audio_cmd = f'yt-dlp --extract-audio --audio-format wav --postprocessor-args "-ar 16000" --output "{video_id}.wav" --paths "{folder_path}" "{video_url}"'
     os.system(dl_audio_cmd)
+    get_transcript = get_VTT(url=video_url,folder_save=folder_path,index=video_id)
+    os.system(get_transcript)
