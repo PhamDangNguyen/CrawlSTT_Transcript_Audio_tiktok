@@ -9,11 +9,27 @@ from time import time
 from scipy.io import wavfile
 from pymongo import MongoClient 
 import time
+import subprocess
 
 cli = MongoClient(host='103.252.1.144', port=27017, username='admin', password='CIST2o20')
 col = cli.voice.error
 
-CMD_CONVERT_1CH_16Khz = 'ffmpeg -y -i "{}" -ac 1 -ar 16000 -resampler soxr "{}" > /dev/null 2>&1 < /dev/null'
+def ffmpeg_convert(input_audio_path,output_audio_path):
+    # Execute ffmpeg command to resample and convert to mono
+    ffmpeg_command = [
+        'ffmpeg',
+        '-i', input_audio_path,
+        '-ac', '1',
+        '-ar', '16000',
+        '-c:a', 'pcm_s16le',
+        '-y',  # Overwrite output file if it already exists
+        output_audio_path
+    ]
+
+    # Execute ffmpeg command
+    subprocess.run(ffmpeg_command)
+
+
 EN_VOCAB = set(open("preprocessing/data/en_words.txt", "r").read().splitlines())
 VI_VOCAB = set(open("preprocessing/data/vi_words.txt", "r", encoding="utf-8").read().splitlines())
 
@@ -53,10 +69,12 @@ def convert_16khz(csv_name='final_label.csv', new_path='audio_processed/', old_p
     print('[INFO] Converting:', csv_name)
     with open(f'{csv_name[:-4]}_1ch.csv', 'w', encoding='utf8') as fp:
         print(f'file,text,duration', file=fp)
-        pbar = tqdm.tqdm(open(csv_name).read().strip().split('\n'))
+        pbar = tqdm.tqdm(open(csv_name,encoding='utf8').read().strip().split('\n'))
         for line in pbar:
             try:
                 path, text, _ = line.split(',')
+                path = path.replace('\\', '/')
+                # print(path,"----",text)
             except Exception as ex:
                 print(ex)
                 continue
@@ -64,22 +82,24 @@ def convert_16khz(csv_name='final_label.csv', new_path='audio_processed/', old_p
                 continue
             _new_path = path.replace(old_path, new_path)
             assert os.path.exists(path)
+            # _new_path.replace('\\', '/')
             new_dir_path = '/'.join(_new_path.split('/')[:-1])
             if not os.path.exists(new_dir_path):
                 os.makedirs(new_dir_path)
 
             _new_path = _new_path[:-4] + '_1ch.wav'
             if not os.path.exists(_new_path):
-                os.system(CMD_CONVERT_1CH_16Khz.format(path, _new_path))
-
-            assert os.path.exists(_new_path)
-
+                print(path)
+                print(_new_path)
+                ffmpeg_convert(path,_new_path)
+            
+            assert os.path.exists(_new_path)      
             fs, speech = wavfile.read(_new_path)
+
             duration = len(speech) / fs
 
             if duration > 20 or duration < 1:
                 continue
-
             print(f'{_new_path},{text},{duration}', file=fp)
 
 def compare(raw_text, norm_words, index):
@@ -164,7 +184,7 @@ def convert_num_to_wordnum(csv_name='final_label_1ch.csv'):
     """
     with open(f'{csv_name[:-4]}_wordnum.csv', 'w', encoding='utf8') as fp:
         print(f'file,text,duration', file=fp)
-        pbar = tqdm.tqdm(open(csv_name).read().strip().split('\n')[1:])
+        pbar = tqdm.tqdm(open(csv_name,encoding='utf8').read().strip().split('\n')[1:])
         for line in pbar:
             path, text, duration = line.split(',')
             # Chuẩn hóa dữ liệu
