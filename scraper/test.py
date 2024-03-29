@@ -8,5 +8,5 @@ with open('tiktok_urls.txt', 'r') as f:
 
 # print(video_urls[0])
 
-# with ThreadPoolExecutor(max_workers=20) as executor:
-#     executor.map(download_audio, [(url, output_path) for url in video_urls])
+with ThreadPoolExecutor(max_workers=5) as executor:
+    executor.map(download_audio, [(url, output_path) for url in video_urls])
