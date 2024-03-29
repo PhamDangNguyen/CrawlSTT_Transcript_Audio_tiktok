@@ -235,7 +235,7 @@ def check_vocab(text):
 def run_check_vocab(csv_name="final_label_1ch_wordnum.csv"):
     with open(f'{csv_name[:-4]}_vocab.csv', 'w', encoding='utf8') as fp:
         print(f'file,text,duration', file=fp)
-        pbar = tqdm.tqdm(open(csv_name).read().strip().split('\n')[1:])
+        pbar = tqdm.tqdm(open(csv_name,encoding='utf8').read().strip().split('\n')[1:])
         for line in pbar:
             path, text, duration = line.split(',')
             if not check_vocab(text):
@@ -299,7 +299,7 @@ def check_force_alignment(path, text, duration):
 def run_force_aligment(csv_name="final_label_1ch_wordnum_vocab.csv"):
     with open(f'{csv_name[:-4]}_force_alignment.csv', 'w', encoding='utf8') as fp:
         print(f'file,text,duration', file=fp)
-        pbar = tqdm.tqdm(open(csv_name).read().strip().split('\n')[1:])
+        pbar = tqdm.tqdm(open(csv_name,encoding='utf8').read().strip().split('\n')[1:])
         for line in pbar:
             path, text, duration = line.split(',')
             if not check_force_alignment(path, text, float(duration)):
@@ -323,7 +323,7 @@ def check_confidence(audio_path, threshold):
 def filter_by_confidence(csv_name="final_label_1ch_wordnum_vocab_force_alignment.csv", threshold=0.65):
     with open(f'{csv_name[:-4]}_final.csv', 'w', encoding='utf8') as fp:
         print(f'file,text,duration', file=fp)
-        pbar = tqdm.tqdm(open(csv_name).read().strip().split('\n')[1:])
+        pbar = tqdm.tqdm(open(csv_name,encoding='utf8').read().strip().split('\n')[1:])
         for line in pbar:
             path, text, duration = line.split(',')
             if not check_confidence(path, threshold):
